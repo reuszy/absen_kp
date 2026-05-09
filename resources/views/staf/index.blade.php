@@ -19,7 +19,6 @@
                 <form action="{{ route('staf.index') }}" method="GET" class="d-flex mb-3">
                     <input type="text" name="search" class="form-control mr-2" placeholder="Cari NIP, Nama, atau Jabatan..." value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary mr-2">Cari</button>
-                    <a href="{{ route('staf.index') }}" class="btn btn-secondary">Reset</a>
                 </form>
 
                 <div class="table-responsive">

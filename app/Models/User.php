@@ -19,10 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nama',
-        'nip',
         'email',
-        'jabatan',
         'password',
+        'role',
+        'is_active',
     ];
 
     /**
@@ -46,5 +46,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi ke data Staff.
+     */
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'users_id');
+    }
+
+    /**
+     * Cek apakah user adalah admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Cek apakah user adalah staff.
+     */
+    public function isStaff(): bool
+    {
+        return $this->role === 'staff';
     }
 }

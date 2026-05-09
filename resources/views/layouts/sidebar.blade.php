@@ -16,8 +16,8 @@
             <span class="count bg-success"></span>
           </div>
           <div class="profile-name">
-            <h5 class="mb-0 font-weight-normal">Admin Kampus</h5>
-            <span>Administrator</span>
+            <h5 class="mb-0 font-weight-normal">{{ Auth::user()->nama }}</h5>
+            <span>{{ ucfirst(Auth::user()->role) }}</span>
           </div>
         </div>
       </div>
@@ -53,6 +53,7 @@
       </a>
     </li>
 
+    @if(Auth::user()->isAdmin())
     <li class="nav-item nav-category">
       <span class="nav-link">Pengaturan</span>
     </li>
@@ -62,9 +63,41 @@
         <span class="menu-icon">
           <i class="mdi mdi-account-group"></i>
         </span>
-        <span class="menu-title">Management Staf</span>
+        <span class="menu-title">Management Staff</span>
       </a>
     </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('user.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('user.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-account-key"></i>
+        </span>
+        <span class="menu-title">Management User</span>
+      </a>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('settings.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-cogs"></i>
+        </span>
+        <span class="menu-title">Pengaturan Sistem</span>
+      </a>
+    </li>
+
+    <li class="nav-item nav-category">
+      <span class="nav-link">Tools</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('simulasi.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('simulasi.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-play-circle-outline"></i>
+        </span>
+        <span class="menu-title">Simulasi Absen</span>
+      </a>
+    </li>
+    @endif
 
   </ul>
 </nav>

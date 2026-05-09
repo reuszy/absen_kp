@@ -37,4 +37,12 @@ class Staff extends Model
     {
         return $this->belongsTo(Faculty::class, 'faculty_id');
     }
+
+    /**
+     * Relasi ke akun User.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
 }

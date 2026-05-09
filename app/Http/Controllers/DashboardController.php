@@ -12,59 +12,92 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $today = Carbon::today()->format('Y-m-d');
+        $today = Carbon::today()->toDateString();
 
-        // Statistics
-        $totalStaff = Staff::count();
-        $totalPegawai = $totalStaff;
+        $totalPegawai = Staff::whereNull('deleted_at')->count();
+ 
+        $hadirHariIni = DailyAttendance::whereDate('date', $today)->count();
+ 
+        $terlambatHariIni = DailyAttendance::whereDate('date', $today)
+            ->where('status_kehadiran', 'Terlambat')
+            ->count();
 
-        $hadirHariIni = DailyAttendance::where('date', $today)->count();
+        $totalTransportBulanIni = DailyAttendance::whereYear('date', Carbon::today()->year)
+            ->whereMonth('date', Carbon::today()->month)
+            ->sum('uang_transport');
+ 
         
-        $terlambatHariIni = DailyAttendance::where('date', $today)
-                            ->where('status_kehadiran', 'Terlambat')
-                            ->count();
+        // Chart 1: Tren 7 Hari Terakhir
 
-        // Recent Activity (Logs) - Increased limit
-        $recentLogs = AttendanceLog::with(['staff'])
-                        ->orderBy('scan_time', 'desc')
-                        ->take(8)
-                        ->get();
-
-        // Chart 1: Weekly Attendance Trend (Last 7 Days)
-        $endDate = Carbon::today();
         $startDate = Carbon::today()->subDays(6);
-        $period = CarbonPeriod::create($startDate, $endDate);
-        
-        $dates = [];
+        $endDate   = Carbon::today();
+ 
+        $attendanceIn7Days = DailyAttendance::whereBetween('date', [
+            $startDate->toDateString(),
+            $endDate->toDateString(),
+        ])->get();
+ 
+        $dates           = [];
         $attendanceCounts = [];
+        $tepatWaktuData  = [];
+        $terlambatData   = [];
+ 
+        $period = CarbonPeriod::create($startDate, $endDate);
+        foreach ($period as $date) {
+            $dateStr = $date->toDateString();
+            $dayData = $attendanceIn7Days->where('date', $dateStr);
+ 
+            $dates[]             = $date->format('d M');
+            $attendanceCounts[]  = $dayData->count();
+            $tepatWaktuData[]    = $dayData->where('status_kehadiran', 'Tepat Waktu')->count();
+            $terlambatData[]     = $dayData->where('status_kehadiran', 'Terlambat')->count();
+        }
+ 
         
-        foreach($period as $date) {
-            $formattedDate = $date->format('Y-m-d');
-            $dates[] = $date->format('d M'); // Label: 20 Jan
-            $attendanceCounts[] = DailyAttendance::where('date', $formattedDate)->count();
+        // Chart 2: Komposisi Kehadiran Hari Ini
+
+        $presentMachineIds = DailyAttendance::whereDate('date', $today)
+            ->pluck('machine_id');
+ 
+        $staffHadir = Staff::whereIn('machine_id', $presentMachineIds)
+            ->whereNull('deleted_at')
+            ->get();
+ 
+        $pejabatPresent = 0;
+        $staffPresent   = 0;
+ 
+        foreach ($staffHadir as $s) {
+            $jabatan = strtolower($s->jabatan ?? '');
+            $isPejabat = str_contains($jabatan, 'dekan')
+                || str_contains($jabatan, 'rektor')
+                || str_contains($jabatan, 'ketua')
+                || str_contains($jabatan, 'kepala')
+                || str_contains($jabatan, 'wakil');
+ 
+            $isPejabat ? $pejabatPresent++ : $staffPresent++;
         }
 
-        // Chart 2: Today's Composition (Dosen vs Staff)
-        // Get list of machine_ids present today
-        $presentIds = DailyAttendance::where('date', $today)->pluck('machine_id');
-        
-        // Count how many are Dosen vs Staff
-        $staffPresent = Staff::whereIn('machine_id', $presentIds)->count();
-        // Fallback for unknown IDs (optional, but good for data integrity check)
-        $unknownPresent = $hadirHariIni - ($staffPresent);
-
-
+        $unknownPresent = $presentMachineIds->diff($staffHadir->pluck('machine_id'))->count();
+ 
+        $recentLogs = AttendanceLog::with(['staff.facultyData'])
+            ->orderBy('scan_time', 'desc')
+            ->take(8)
+            ->get();
+ 
         return view('dashboard', compact(
-            'totalPegawai', 
-            'hadirHariIni', 
-            'terlambatHariIni', 
+            'totalPegawai',
+            'hadirHariIni',
+            'terlambatHariIni',
+            'totalTransportBulanIni',
             'recentLogs',
             'today',
             'dates',
             'attendanceCounts',
+            'tepatWaktuData',
+            'terlambatData',
             'staffPresent',
+            'pejabatPresent',
             'unknownPresent',
-            'totalStaff'
         ));
     }
 }

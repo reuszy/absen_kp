@@ -34,19 +34,22 @@ class StafController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nip' => 'required|unique:staff,nip',
-            'nama' => 'required',
-            'jabatan' => 'required',
+            'nip'        => 'required|unique:staff,nip',
+            'nama'       => 'required',
+            'jabatan'    => 'required',
             'faculty_id' => 'required|exists:faculties,id',
-            'status' => 'required|boolean',
+            'status'     => 'required|boolean',
         ]);
 
-        $data = $request->all();
-
-        $data['machine_id'] = $request->nip;
-        $data['work_shift_id'] = $request->work_shift_id ?? 1;
-
-        Staff::create($data);
+        Staff::create([
+            'work_shift_id' => $request->work_shift_id ?? 1,
+            'machine_id'    => $request->nip,
+            'nip'           => $request->nip,
+            'nama'          => $request->nama,
+            'jabatan'       => $request->jabatan,
+            'faculty_id'    => $request->faculty_id,
+            'status'        => $request->status,
+        ]);
 
         return redirect()->route('staf.index')->with('success', 'Data staf berhasil ditambahkan.');
     }
@@ -65,11 +68,11 @@ class StafController extends Controller
     public function update(Request $request, Staff $staf)
     {
         $request->validate([
-            'nip' => 'required|unique:staff,nip,' . $staf->id,
-            'nama' => 'required',
-            'jabatan' => 'required',
+            'nip'        => 'required|unique:staff,nip,' . $staf->id,
+            'nama'       => 'required',
+            'jabatan'    => 'required',
             'faculty_id' => 'required|exists:faculties,id',
-            'status' => 'required|boolean',
+            'status'     => 'required|boolean',
         ]);
 
         $data = $request->all();

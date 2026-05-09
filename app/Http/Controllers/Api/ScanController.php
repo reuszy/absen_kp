@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AttendanceLog;
 use App\Models\DailyAttendance;
 use App\Models\Staff;
+use App\Models\WorkShift;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -43,7 +44,7 @@ class ScanController extends Controller
             ], 404);
         }
 
-        $shift = $staff->workShift;
+        $shift = $staff->workShift ?? WorkShift::find(1);
 
         $jamMasukShift = $shift ? $shift->jam_masuk : '08:15:00';
 
@@ -87,7 +88,7 @@ class ScanController extends Controller
                 
                 $nominalTransport = $shift->uang_transport ?? 0;
                 
-                $jamPulangShift = $shift->jam_pulang ?? '17:00:00'; 
+                $jamPulangShift = $shift ? $shift->jam_pulang : '17:00:00'; 
 
                 if ($daily->status_kehadiran === 'Terlambat') {
                     $nominalTransport = 0; 
