@@ -142,6 +142,9 @@
                             <small class="text-muted">
                                 <span style="display:inline-block;width:10px;height:10px;background:#fc424a;border-radius:2px;margin-right:4px;"></span>Terlambat
                             </small>
+                            <small class="text-muted">
+                                <span style="display:inline-block;width:10px;height:10px;background:#ffab00;border-radius:2px;margin-right:4px;"></span>Sakit/Izin/Cuti
+                            </small>
                         </div>
                     </div>
                     <div style="position:relative;height:250px;">
@@ -242,7 +245,11 @@
                                             @if($log->keterangan_sistem)
                                                 <span class="badge badge-outline-info">{{ $log->keterangan_sistem }}</span>
                                             @else
-                                                <span class="badge badge-outline-success">Scan Masuk</span>
+                                                @if($log->status_scan == 1)
+                                                    <span class="badge badge-outline-warning">Scan Pulang</span>
+                                                @else
+                                                    <span class="badge badge-outline-success">Scan Masuk</span>
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
@@ -287,6 +294,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     data: @json($terlambatData),
                     backgroundColor: 'rgba(252, 66, 74, 0.75)',
                     borderColor: '#fc424a',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                },
+                {
+                    label: 'Sakit/Izin/Cuti',
+                    data: @json($izinData),
+                    backgroundColor: 'rgba(255, 171, 0, 0.75)',
+                    borderColor: '#ffab00',
                     borderWidth: 1,
                     borderRadius: 4,
                 }

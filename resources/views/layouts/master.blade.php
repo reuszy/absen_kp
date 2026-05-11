@@ -47,8 +47,9 @@
             min-width: 0; /* CRITICAL: Allows flex item to shrink below content size */
         }
     </style>
+    @stack('styles')
   </head>
-  <body>
+  <body class="sidebar-fixed">
     <div class="container-scroller">
       
       @include('layouts.sidebar')
@@ -76,5 +77,6 @@
     <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
     <script src="{{ asset('assets/js/misc.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    @stack('scripts')
   </body>
 </html>

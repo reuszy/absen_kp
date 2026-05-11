@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DailyAttendance;
 use App\Models\Faculty;
+use App\Models\Leave;
 use App\Models\Staff;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class StafController extends Controller
@@ -54,9 +57,61 @@ class StafController extends Controller
         return redirect()->route('staf.index')->with('success', 'Data staf berhasil ditambahkan.');
     }
 
-    public function show(Staff $staff)
+    public function show(Staff $staf)
     {
-        // Not used
+        $staf->load('facultyData');
+
+        $events = [];
+
+        // Fetch Daily Attendance
+        if ($staf->machine_id) {
+            $attendances = DailyAttendance::where('machine_id', $staf->machine_id)->get();
+            foreach ($attendances as $atten) {
+                $status = $atten->status_kehadiran;
+                $color = '#28a745'; // default green (Hadir)
+                if ($status == 'Terlambat') {
+                    $color = '#ffc107'; // yellow/orange
+                } elseif ($status == 'Alpa') {
+                    $color = '#dc3545'; // red
+                }
+
+                $title = $status;
+                if ($atten->jam_masuk) {
+                    $masuk = Carbon::parse($atten->jam_masuk)->format('H:i');
+                    $title .= " ({$masuk})";
+                }
+
+                $events[] = [
+                    'title' => $title,
+                    'start' => $atten->date,
+                    'color' => $color,
+                    'allDay' => true
+                ];
+            }
+
+            // Fetch Leaves
+            $leaves = Leave::where('staff_id', $staf->id)->get();
+            foreach ($leaves as $leave) {
+                $color = '#17a2b8'; // default blue
+                if (strtolower($leave->type) == 'sakit') {
+                    $color = '#fd7e14'; // orange
+                } elseif (strtolower($leave->type) == 'izin') {
+                    $color = '#6f42c1'; // purple
+                } elseif (strtolower($leave->type) == 'cuti') {
+                    $color = '#20c997'; // teal
+                }
+
+                $events[] = [
+                    'title' => strtoupper($leave->type) . ($leave->reason ? ' - ' . $leave->reason : ''),
+                    'start' => $leave->start_date,
+                    'end' => Carbon::parse($leave->end_date)->addDay()->format('Y-m-d'), // Exclusive end date for fullcalendar
+                    'color' => $color,
+                    'allDay' => true
+                ];
+            }
+        }
+
+        return view('staf.show', compact('staf', 'events'));
     }
 
     public function edit(Staff $staf)

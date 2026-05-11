@@ -43,8 +43,36 @@
         <span class="menu-title">Rekap Absensi</span>
       </a>
     </li>
-    
-     <li class="nav-item menu-items {{ request()->routeIs('attendance.logs') ? 'active' : '' }}">
+
+    @if (Auth::user()->isStaff())
+    <li class="nav-item nav-category">
+      <span class="nav-link">Data</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('staf.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('staf.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-card-account-details"></i>
+        </span>
+        <span class="menu-title">Data Staf</span>
+      </a>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('leaves.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('leaves.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-calendar-remove"></i>
+        </span>
+        <span class="menu-title">Izin & Cuti</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item nav-category">
+      <span class="nav-link">Log Absensi</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('attendance.logs') ? 'active' : '' }}">
       <a class="nav-link" href="{{ route('attendance.logs') }}">
         <span class="menu-icon">
           <i class="mdi mdi-account-box"></i>
@@ -52,19 +80,36 @@
         <span class="menu-title">Log Absen</span>
       </a>
     </li>
+    
+    @endif
+
 
     @if(Auth::user()->isAdmin())
     <li class="nav-item nav-category">
-      <span class="nav-link">Pengaturan</span>
+      <span class="nav-link">Data</span>
     </li>
 
     <li class="nav-item menu-items {{ request()->routeIs('staf.*') ? 'active' : '' }}">
       <a class="nav-link" href="{{ route('staf.index') }}">
         <span class="menu-icon">
-          <i class="mdi mdi-account-group"></i>
+          <i class="mdi mdi-card-account-details"></i>
         </span>
-        <span class="menu-title">Management Staff</span>
+        <span class="menu-title">Data Staf</span>
       </a>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('leaves.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('leaves.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-calendar-remove"></i>
+        </span>
+        <span class="menu-title">Izin & Cuti</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item nav-category">
+      <span class="nav-link">Pengaturan</span>
     </li>
 
     <li class="nav-item menu-items {{ request()->routeIs('user.*') ? 'active' : '' }}">
@@ -81,7 +126,21 @@
         <span class="menu-icon">
           <i class="mdi mdi-cogs"></i>
         </span>
-        <span class="menu-title">Pengaturan Sistem</span>
+        <span class="menu-title">Management Shift</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item nav-category">
+      <span class="nav-link">Log Absensi</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('attendance.logs') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('attendance.logs') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-account-box"></i>
+        </span>
+        <span class="menu-title">Log Absen</span>
       </a>
     </li>
 

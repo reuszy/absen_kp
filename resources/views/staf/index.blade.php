@@ -50,24 +50,89 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <a href="{{ route('staf.show', $staf->id) }}" class="btn btn-info btn-sm icon-btn" title="Detail & Kalender">
+                                        <i class="mdi mdi-eye"></i>
+                                    </a>
                                     <a href="{{ route('staf.edit', $staf->id) }}" class="btn btn-warning btn-sm icon-btn">
                                         <i class="mdi mdi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('staf.destroy', $staf->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm icon-btn">
-                                            <i class="mdi mdi-delete"></i>
-                                        </button>
-                                    </form>
+                                    @if(Auth::user()->isAdmin())
+                                        <form action="{{ route('staf.destroy', $staf->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm icon-btn">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-3">
-                    {{ $stafs->links() }}
+                {{-- Footer: info + pagination --}}
+                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap" style="gap: 8px;">
+
+                    <p class="text-muted mb-0" style="font-size: 0.8rem;">
+                        Menampilkan
+                        <strong class="text-white">{{ $stafs->firstItem() ?? 0 }}</strong>–<strong class="text-white">{{ $stafs->lastItem() ?? 0 }}</strong>
+                        dari <strong class="text-white">{{ $stafs->total() }}</strong> data staf
+                    </p>
+
+                    @if($stafs->hasPages())
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item {{ $stafs->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $stafs->previousPageUrl() }}"
+                            style="background:#2A3038; border-color:#484848; color:#9a9a9a;">
+                                <i class="mdi mdi-chevron-left"></i>
+                            </a>
+                        </li>
+                        @php
+                            $current = $stafs->currentPage();
+                            $last    = $stafs->lastPage();
+                            $start   = max(1, $current - 2);
+                            $end     = min($last, $current + 2);
+                        @endphp
+                        @if($start > 1)
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $stafs->url(1) }}"
+                                style="background:#2A3038; border-color:#484848; color:#9a9a9a;">1</a>
+                            </li>
+                            @if($start > 2)
+                                <li class="page-item disabled">
+                                    <span class="page-link" style="background:#1e2130; border-color:#484848; color:#6c7293;">…</span>
+                                </li>
+                            @endif
+                        @endif
+                        @for($p = $start; $p <= $end; $p++)
+                            <li class="page-item {{ $p === $current ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $stafs->url($p) }}"
+                                style="{{ $p === $current ? '' : 'background:#2A3038; border-color:#484848; color:#9a9a9a;' }}">
+                                    {{ $p }}
+                                </a>
+                            </li>
+                        @endfor
+                        @if($end < $last)
+                            @if($end < $last - 1)
+                                <li class="page-item disabled">
+                                    <span class="page-link" style="background:#1e2130; border-color:#484848; color:#6c7293;">…</span>
+                                </li>
+                            @endif
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $stafs->url($last) }}"
+                                style="background:#2A3038; border-color:#484848; color:#9a9a9a;">{{ $last }}</a>
+                            </li>
+                        @endif
+                        <li class="page-item {{ !$stafs->hasMorePages() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $stafs->nextPageUrl() }}"
+                            style="background:#2A3038; border-color:#484848; color:#9a9a9a;">
+                                <i class="mdi mdi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    @endif
+
                 </div>
             </div>
         </div>

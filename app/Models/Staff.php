@@ -38,6 +38,11 @@ class Staff extends Model
         return $this->belongsTo(Faculty::class, 'faculty_id');
     }
 
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+
     /**
      * Relasi ke akun User.
      */

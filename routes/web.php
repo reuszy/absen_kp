@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StafController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LeaveController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -28,10 +29,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/logs', [AttendanceController::class, 'index'])->name('attendance.logs');
     Route::get('/rekap', [AttendanceController::class, 'rekap'])->name('attendance.rekap');
     Route::get('/rekap/download-pdf', [AttendanceController::class, 'downloadPDF'])->name('attendance.download_pdf');
+    Route::get('/rekap/download-excel', [AttendanceController::class, 'downloadExcel'])->name('attendance.download_excel');
 
-    // Pengaturan: Admin
+    // Manajemen Izin & Cuti: Semua role
+    Route::resource('leaves', LeaveController::class);
+
+    // Data Staf: CRU untuk semua role
+    Route::resource('staf', StafController::class)->except(['destroy']);
+
+    // Pengaturan & Delete Staf: Hanya Admin
     Route::middleware('role:admin')->group(function () {
-        Route::resource('staf', StafController::class);
+        Route::delete('staf/{staf}', [StafController::class, 'destroy'])->name('staf.destroy');
         Route::resource('user', UserController::class)->except(['show']);
         
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

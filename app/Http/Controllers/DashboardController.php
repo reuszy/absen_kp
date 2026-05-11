@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Leave;
 use App\Models\Staff;
 use App\Models\DailyAttendance;
 use App\Models\AttendanceLog;
@@ -37,20 +38,38 @@ class DashboardController extends Controller
             $endDate->toDateString(),
         ])->get();
  
+        $leavesIn7Days = Leave::where(function($q) use ($startDate, $endDate) {
+            $q->whereBetween('start_date', [$startDate, $endDate])
+              ->orWhereBetween('end_date', [$startDate, $endDate])
+              ->orWhere(function($q2) use ($startDate, $endDate) {
+                  $q2->where('start_date', '<', $startDate)
+                     ->where('end_date', '>', $endDate);
+              });
+        })->get();
+ 
         $dates           = [];
         $attendanceCounts = [];
         $tepatWaktuData  = [];
         $terlambatData   = [];
+        $izinData        = [];
  
         $period = CarbonPeriod::create($startDate, $endDate);
         foreach ($period as $date) {
             $dateStr = $date->toDateString();
             $dayData = $attendanceIn7Days->where('date', $dateStr);
+
+            $leavesCount = 0;
+            foreach ($leavesIn7Days as $leave) {
+                if ($dateStr >= $leave->start_date && $dateStr <= $leave->end_date) {
+                    $leavesCount++;
+                }
+            }
  
             $dates[]             = $date->format('d M');
             $attendanceCounts[]  = $dayData->count();
-            $tepatWaktuData[]    = $dayData->where('status_kehadiran', 'Tepat Waktu')->count();
+            $tepatWaktuData[]    = $dayData->where('status_kehadiran', 'Hadir')->count();
             $terlambatData[]     = $dayData->where('status_kehadiran', 'Terlambat')->count();
+            $izinData[]          = $leavesCount;
         }
  
         
@@ -95,6 +114,7 @@ class DashboardController extends Controller
             'attendanceCounts',
             'tepatWaktuData',
             'terlambatData',
+            'izinData',
             'staffPresent',
             'pejabatPresent',
             'unknownPresent',

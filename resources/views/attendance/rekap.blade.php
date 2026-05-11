@@ -166,7 +166,7 @@
                         </div>
 
                         <div style="padding-top: 18px;">
-                            <div class="dropdown">
+                            <div class="dropdown d-inline-block">
                                 <button class="btn btn-danger btn-sm dropdown-toggle"
                                         type="button"
                                         data-bs-toggle="dropdown"
@@ -175,6 +175,11 @@
                                     <i class="mdi mdi-file-pdf"></i> Download PDF
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item"
+                                       href="{{ route('attendance.download_pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'faculty_id' => $facultyId, 'type' => 'custom']) }}">
+                                        <i class="mdi mdi-filter mr-2"></i> Sesuai Filter
+                                    </a>
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item"
                                        href="{{ route('attendance.download_pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'faculty_id' => $facultyId, 'type' => 'daily']) }}">
                                         <i class="mdi mdi-calendar-today mr-2"></i> Harian
@@ -189,12 +194,41 @@
                                     </a>
                                 </div>
                             </div>
+
+                            <div class="dropdown d-inline-block ml-2">
+                                <button class="btn btn-success btn-sm dropdown-toggle"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    <i class="mdi mdi-file-excel"></i> Export Excel
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item"
+                                       href="{{ route('attendance.download_excel', ['start_date' => $startDate, 'end_date' => $endDate, 'faculty_id' => $facultyId, 'type' => 'custom']) }}">
+                                        <i class="mdi mdi-filter mr-2"></i> Sesuai Filter
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item"
+                                       href="{{ route('attendance.download_excel', ['start_date' => $startDate, 'end_date' => $endDate, 'faculty_id' => $facultyId, 'type' => 'daily']) }}">
+                                        <i class="mdi mdi-calendar-today mr-2"></i> Harian
+                                    </a>
+                                    <a class="dropdown-item"
+                                       href="{{ route('attendance.download_excel', ['start_date' => $startDate, 'end_date' => $endDate, 'faculty_id' => $facultyId, 'type' => 'weekly']) }}">
+                                        <i class="mdi mdi-calendar-week mr-2"></i> Mingguan
+                                    </a>
+                                    <a class="dropdown-item"
+                                       href="{{ route('attendance.download_excel', ['start_date' => $startDate, 'end_date' => $endDate, 'faculty_id' => $facultyId, 'type' => 'monthly']) }}">
+                                        <i class="mdi mdi-calendar-month mr-2"></i> Bulanan
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                     </form>
                 </div>
 
-                {{-- Legenda --}}
+                {{-- Legend --}}
                 <div class="d-flex align-items-center mb-3" style="gap: 16px; font-size: 0.78rem;">
                     <span class="text-muted">Keterangan:</span>
                     <span>
@@ -208,6 +242,18 @@
                     <span>
                         <span style="display:inline-block;width:10px;height:10px;background:#2A3038;border:1px solid #484848;border-radius:2px;margin-right:4px;"></span>
                         Tidak Hadir
+                    </span>
+                    <span>
+                        <span style="display:inline-block;width:10px;height:10px;background:rgba(255,171,0,0.15);border:1px solid #ffab00;border-radius:2px;margin-right:4px;"></span>
+                        Sakit
+                    </span>
+                    <span>
+                        <span style="display:inline-block;width:10px;height:10px;background:rgba(143,95,232,0.15);border:1px solid #8f5fe8;border-radius:2px;margin-right:4px;"></span>
+                        Izin
+                    </span>
+                    <span>
+                        <span style="display:inline-block;width:10px;height:10px;background:rgba(0,144,231,0.15);border:1px solid #0090e7;border-radius:2px;margin-right:4px;"></span>
+                        Cuti
                     </span>
                 </div>
 
@@ -269,6 +315,19 @@
                                                 </div>
                                             </td>
                                         @endif
+                                    @elseif(isset($data['leaves'][$date]))
+                                        @php
+                                            $leaveColor = '#ffab00'; // Default warning/kuning
+                                            if($data['leaves'][$date] == 'Sakit') $leaveColor = '#ffab00';
+                                            elseif($data['leaves'][$date] == 'Cuti') $leaveColor = '#0090e7'; // Info/Biru
+                                            elseif($data['leaves'][$date] == 'Izin') $leaveColor = '#8f5fe8'; // Ungu
+                                            elseif($data['leaves'][$date] == 'Dinas Luar') $leaveColor = '#00d25b'; // Hijau
+                                        @endphp
+                                        <td class="text-center" style="background-color: rgba({{ hexdec(substr($leaveColor,1,2)) }}, {{ hexdec(substr($leaveColor,3,2)) }}, {{ hexdec(substr($leaveColor,5,2)) }}, 0.15);">
+                                            <span style="font-size: 0.75rem; font-weight: bold; color: {{ $leaveColor }};">
+                                                {{ strtoupper($data['leaves'][$date]) }}
+                                            </span>
+                                        </td>
                                     @else
                                         {{-- Tidak hadir --}}
                                         <td class="text-center" style="background-color: #1e2130;">
