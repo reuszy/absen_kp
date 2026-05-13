@@ -69,6 +69,20 @@
 
 
     <li class="nav-item nav-category">
+      <span class="nav-link">Pengaturan</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('account.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('account.show') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-account-cog text-info"></i>
+        </span>
+        <span class="menu-title">Pengaturan Akun</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item nav-category">
       <span class="nav-link">Log Absensi</span>
     </li>
 
@@ -117,7 +131,7 @@
         <span class="menu-icon">
           <i class="mdi mdi-account-key"></i>
         </span>
-        <span class="menu-title">Management User</span>
+        <span class="menu-title">Manajemen User</span>
       </a>
     </li>
 
@@ -126,7 +140,34 @@
         <span class="menu-icon">
           <i class="mdi mdi-cogs"></i>
         </span>
-        <span class="menu-title">Management Shift</span>
+        <span class="menu-title">Manajemen Shift</span>
+      </a>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('fakultas.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('fakultas.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-domain"></i>
+        </span>
+        <span class="menu-title">Manajemen Fakultas</span>
+      </a>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('fingerprint.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('fingerprint.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-fingerprint"></i>
+        </span>
+        <span class="menu-title">Perangkat Fingerprint</span>
+      </a>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('account.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('account.show') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-account-cog text-info"></i>
+        </span>
+        <span class="menu-title">Pengaturan Akun</span>
       </a>
     </li>
 

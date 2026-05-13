@@ -37,12 +37,12 @@ class TarikAbsen extends Command
         $scanController = new ScanController();
 
         foreach ($devices as $device) {
-            $this->info("Memproses: {$device->name} ({$device->vpn})");
+            $this->info("Memproses: {$device->nama_lokasi} ({$device->vpn})");
             
             $zk = new ZKTeco($device->vpn, $device->port); 
             
             if (!$zk->connect()) {
-                $this->error("Gagal konek ke {$device->name}. Skip.");
+                $this->error("Gagal konek ke {$device->nama_lokasi}.");
                 continue;
             }
 

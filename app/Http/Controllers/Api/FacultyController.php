@@ -48,7 +48,7 @@ class FacultyController extends Controller
     }
 
 
-    public function show($id)
+    public function show(int $id)
     {
         $faculty = Faculty::find($id);
 
@@ -67,7 +67,7 @@ class FacultyController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $faculty = Faculty::find($id);
 
@@ -102,7 +102,7 @@ class FacultyController extends Controller
     }
 
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $faculty = Faculty::find($id);
 

@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FacultyWebController;
+use App\Http\Controllers\FingerprintDeviceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StafController;
 use App\Http\Controllers\UserController;
@@ -20,6 +23,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Protected Routes (Auth Required)
 Route::middleware('auth')->group(function () {
+
+    // Pengaturan Akun: Semua role
+    Route::get('/account', [AccountController::class, 'show'])->name('account.show');
+    Route::put('/account', [AccountController::class, 'update'])->name('account.update');
 
     // Dashboard: Semua role
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -46,6 +53,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
         Route::get('/simulasi-absen', fn() => view('simulasi.index'))->name('simulasi.index');
+
+        Route::resource('fakultas', FacultyWebController::class)->except(['show'])->parameters(['fakultas' => 'fakultas']);
+        Route::resource('fingerprint', FingerprintDeviceController::class)->except(['show']);
     });
 
 });
