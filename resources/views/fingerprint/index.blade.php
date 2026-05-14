@@ -46,6 +46,11 @@
                                 <td>{{ $device->port }}</td>
                                 <td>{{ $device->created_at->format('d M Y') }}</td>
                                 <td>
+                                    <a href="{{ route('fingerprint.test', $device->id) }}"
+                                       class="btn btn-info btn-sm icon-btn"
+                                       title="Test Koneksi">
+                                        <i class="mdi mdi-lan-connect"></i>
+                                    </a>
                                     <a href="{{ route('fingerprint.edit', $device->id) }}" class="btn btn-warning btn-sm icon-btn">
                                         <i class="mdi mdi-pencil"></i>
                                     </a>

@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\ScanController;
 use App\Models\Staff;
 use App\Models\DailyAttendance;
 use App\Models\AttendanceLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class SimulasiAbsenController extends Controller
+class ManualPresenceController extends Controller
 {
+    public function index()
+    {
+        return view('manual-presence.index');
+    }
+
+
     /**
      * GET /api/simulasi/staff
      * Ambil daftar staff aktif untuk dipilih di halaman simulasi.
@@ -68,7 +75,7 @@ class SimulasiAbsenController extends Controller
      *  - machine_id (required): ID mesin staf
      *  - scan_time (optional): Waktu simulasi "Y-m-d H:i:s" (default: sekarang)
      */
-    public function simulasiScan(Request $request)
+    public function manualScan(Request $request)
     {
         $request->validate([
             'machine_id' => 'required',

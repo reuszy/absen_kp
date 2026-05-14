@@ -1,9 +1,9 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-    <a class="sidebar-brand brand-logo" href="#" style="color:white; text-decoration:none;">
+    <a class="sidebar-brand brand-logo" href="/" style="color:white; text-decoration:none;">
       <img src="{{ asset('assets/images/logo_ugj.jpg') }}" alt="logo" style="height: auto; width: 100%; max-width: 150px;" />
     </a>
-    <a class="sidebar-brand brand-logo-mini" href="#" style="color:white; text-decoration:none;">
+    <a class="sidebar-brand brand-logo-mini" href="/" style="color:white; text-decoration:none;">
       <img src="{{ asset('assets/images/logo_mini_ugj.jpg') }}" alt="logo" style="height: auto; width: 100%; max-width: 40px;" />
     </a>
   </div>
@@ -54,7 +54,7 @@
         <span class="menu-icon">
           <i class="mdi mdi-card-account-details"></i>
         </span>
-        <span class="menu-title">Data Staf</span>
+        <span class="menu-title">Data Pegawai</span>
       </a>
     </li>
 
@@ -64,6 +64,20 @@
           <i class="mdi mdi-calendar-remove"></i>
         </span>
         <span class="menu-title">Izin & Cuti</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item nav-category">
+      <span class="nav-link">Tools</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('simulasi.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('manual-presence.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-pencil-plus"></i>
+        </span>
+        <span class="menu-title">Absen Manual</span>
       </a>
     </li>
 
@@ -108,7 +122,7 @@
         <span class="menu-icon">
           <i class="mdi mdi-card-account-details"></i>
         </span>
-        <span class="menu-title">Data Staf</span>
+        <span class="menu-title">Data Pegawai</span>
       </a>
     </li>
 
@@ -118,6 +132,20 @@
           <i class="mdi mdi-calendar-remove"></i>
         </span>
         <span class="menu-title">Izin & Cuti</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item nav-category">
+      <span class="nav-link">Tools</span>
+    </li>
+
+    <li class="nav-item menu-items {{ request()->routeIs('simulasi.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('manual-presence.index') }}">
+        <span class="menu-icon">
+          <i class="mdi mdi-pencil-plus"></i>
+        </span>
+        <span class="menu-title">Absen Manual</span>
       </a>
     </li>
 
@@ -182,19 +210,6 @@
           <i class="mdi mdi-account-box"></i>
         </span>
         <span class="menu-title">Log Absen</span>
-      </a>
-    </li>
-
-    <li class="nav-item nav-category">
-      <span class="nav-link">Tools</span>
-    </li>
-
-    <li class="nav-item menu-items {{ request()->routeIs('simulasi.*') ? 'active' : '' }}">
-      <a class="nav-link" href="{{ route('simulasi.index') }}">
-        <span class="menu-icon">
-          <i class="mdi mdi-play-circle-outline"></i>
-        </span>
-        <span class="menu-title">Simulasi Absen</span>
       </a>
     </li>
     @endif

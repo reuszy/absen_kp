@@ -9,7 +9,7 @@ use App\Models\Staff;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class StafController extends Controller
+class StaffController extends Controller
 {
     public function index(Request $request)
     {
@@ -25,13 +25,13 @@ class StafController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('staf.index', compact('stafs'));
+        return view('staff.index', compact('stafs'));
     }
 
     public function create()
     {
         $faculties = Faculty::all();
-        return view('staf.create', compact('faculties'));
+        return view('staff.create', compact('faculties'));
     }
 
     public function store(Request $request)
@@ -54,7 +54,7 @@ class StafController extends Controller
             'status'        => $request->status,
         ]);
 
-        return redirect()->route('staf.index')->with('success', 'Data staf berhasil ditambahkan.');
+        return redirect()->route('staff.index')->with('success', 'Data staf berhasil ditambahkan.');
     }
 
     public function show(Staff $staf)
@@ -68,11 +68,11 @@ class StafController extends Controller
             $attendances = DailyAttendance::where('machine_id', $staf->machine_id)->get();
             foreach ($attendances as $atten) {
                 $status = $atten->status_kehadiran;
-                $color = '#28a745'; // default green (Hadir)
+                $color = 'green';
                 if ($status == 'Terlambat') {
-                    $color = '#ffc107'; // yellow/orange
+                    $color = 'orange';
                 } elseif ($status == 'Alpa') {
-                    $color = '#dc3545'; // red
+                    $color = 'red';
                 }
 
                 $title = $status;
@@ -111,13 +111,13 @@ class StafController extends Controller
             }
         }
 
-        return view('staf.show', compact('staf', 'events'));
+        return view('staff.show', compact('staf', 'events'));
     }
 
     public function edit(Staff $staf)
     {
         $faculties = Faculty::all();
-        return view('staf.edit', compact('staf', 'faculties'));
+        return view('staff.edit', compact('staf', 'faculties'));
     }
 
     public function update(Request $request, Staff $staf)
@@ -136,13 +136,13 @@ class StafController extends Controller
 
         $staf->update($data);
 
-        return redirect()->route('staf.index')->with('success', 'Data staf berhasil diperbarui.');
+        return redirect()->route('staff.index')->with('success', 'Data staf berhasil diperbarui.');
     }
 
     public function destroy(Staff $staf)
     {
         $staf->delete();
 
-        return redirect()->route('staf.index')->with('success', 'Data staf berhasil dihapus.');
+        return redirect()->route('staff.index')->with('success', 'Data staf berhasil dihapus.');
     }
 }

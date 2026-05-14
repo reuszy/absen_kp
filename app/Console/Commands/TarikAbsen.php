@@ -11,16 +11,18 @@ use Jmrashed\Zkteco\Lib\ZKTeco;
 
 class TarikAbsen extends Command
 {
-    protected $signature = 'absen:tarik {device_id?}'; 
+    protected $signature = 'absen:tarik {device_id?} {--from= : Tanggal mulai filter (Y-m-d)} {--to= : Tanggal akhir filter (Y-m-d)}';
     protected $description = 'Tarik data log dari database fingerprint_devices';
 
     public function handle()
     {
-        ini_set('memory_limit', '-1'); 
-        set_time_limit(0); 
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
 
-        $filterStartDate = '2025-12-01';
-        $filterEndDate   = '2026-02-28';
+        $filterStartDate = $this->option('from') ?? now()->startOfMonth()->format('Y-m-d');
+        $filterEndDate   = $this->option('to')   ?? now()->format('Y-m-d');
+
+        $this->info("Filter tanggal: {$filterStartDate} s.d. {$filterEndDate}");
 
         $deviceId = $this->argument('device_id');
 

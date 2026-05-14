@@ -7,9 +7,9 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h3 class="page-title text-white">
-                        <i class="mdi mdi-play-circle-outline mr-1"></i> Simulasi Absen
+                        <i class="mdi mdi-pencil-plus mr-1"></i> Absen Manual
                     </h3>
-                    <p class="text-secondary">Simulasikan scan absen masuk & pulang untuk demo/testing.</p>
+                    <p class="text-secondary">Input scan absen masuk & pulang secara manual.</p>
                 </div>
                 <div>
                     <span class="badge badge-dark p-2" id="currentTime" style="font-size: 1rem;"></span>
@@ -44,14 +44,19 @@
                             </button>
                         </div>
                         <div class="d-flex align-items-center" style="gap: 10px;">
+                            <div class="input-group input-group-sm" style="width: 280px;">
+                                <input type="text" id="searchStaff"
+                                       class="form-control text-white"
+                                       placeholder="Cari nama atau NIP..."
+                                       style="background-color:#2A3038; border-color:#484848;"
+                                       oninput="filterStaff(this.value)">
+                            </div>
                             <button class="btn btn-info btn-sm" onclick="refreshStaff()">
                                 <i class="mdi mdi-refresh"></i> Refresh
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="resetAll()" id="btnResetAll">
-                                <i class="mdi mdi-delete-sweep"></i> Reset Semua Absen Hari Ini
-                            </button>
                         </div>
                     </div>
+                    <small class="text-muted mt-2 d-block" id="searchCount"></small>
                 </div>
             </div>
         </div>
@@ -103,7 +108,8 @@
 </style>
 
 <script>
-    const BASE = '/api/simulasi';
+    const BASE = '/api/manualPresence';
+    let allStaff = [];
 
     // Set current time on load
     function setNow() {
@@ -146,10 +152,35 @@
         try {
             const res = await fetch(BASE + '/staff');
             const data = await res.json();
-            renderStaff(data.staff);
+            allStaff = data.staff;
+            filterStaff(document.getElementById('searchStaff').value);
         } catch (e) {
             container.innerHTML = '<div class="col-12 text-center py-5"><p class="text-danger">Gagal memuat data.</p></div>';
         }
+    }
+
+    function filterStaff(query) {
+        const q = query.trim().toLowerCase();
+        const filtered = q
+            ? allStaff.filter(s =>
+                s.nama.toLowerCase().includes(q) ||
+                String(s.nip).toLowerCase().includes(q)
+              )
+            : allStaff;
+
+        const countEl = document.getElementById('searchCount');
+        if (q) {
+            countEl.textContent = `Menampilkan ${filtered.length} dari ${allStaff.length} pegawai`;
+        } else {
+            countEl.textContent = '';
+        }
+
+        renderStaff(filtered);
+    }
+
+    function clearSearch() {
+        document.getElementById('searchStaff').value = '';
+        filterStaff('');
     }
 
     function renderStaff(staffList) {
@@ -263,27 +294,6 @@
             });
             const data = await res.json();
             showAlert(`Data absen "${nama}" berhasil direset.`, 'info');
-            refreshStaff();
-        } catch (e) {
-            showAlert('Gagal mereset data.', 'danger');
-        }
-    }
-
-    async function resetAll() {
-        if (!confirm('Reset SEMUA data absen hari ini? Ini tidak bisa dibatalkan.')) return;
-
-        try {
-            const res = await fetch(BASE + '/reset', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json' 
-                },
-                body: JSON.stringify({})
-            });
-            const data = await res.json();
-            showAlert(`Semua data absen hari ini berhasil direset. (${data.deleted_daily} daily, ${data.deleted_logs} logs)`, 'info');
             refreshStaff();
         } catch (e) {
             showAlert('Gagal mereset data.', 'danger');

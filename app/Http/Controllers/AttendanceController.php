@@ -109,7 +109,7 @@ class AttendanceController extends Controller
         ));
     }
 
-    private function getReportData($startDate, $endDate, $facultyId, $dates)
+    private function getReportData(string $startDate, string $endDate, ?int $facultyId, array $dates): array
     {
         $staffQuery = Staff::with('facultyData')->orderBy('nama');
         if ($facultyId) {
@@ -312,7 +312,7 @@ class AttendanceController extends Controller
         return Excel::download(new AttendanceExport($data), 'Laporan_Absensi_' . $type . '_' . $startDate . '.xlsx');
     }
 
-    private function getJobLevel($position)
+    private function getJobLevel(string $position): int
     {
         $position = trim($position);
 

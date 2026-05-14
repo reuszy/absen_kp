@@ -9,7 +9,6 @@ use App\Models\Staff;
 use App\Models\WorkShift;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ScanController extends Controller
 {
@@ -93,7 +92,7 @@ class ScanController extends Controller
                 if ($daily->status_kehadiran === 'Terlambat') {
                     $nominalTransport = 0; 
                 } 
-                elseif ($timeOnly < $jamPulangShift) {
+                elseif ($timeOnly > $jamPulangShift) {
                     $nominalTransport = 0; 
                 } 
                 elseif ($timeOnly > '18:00:00') {
